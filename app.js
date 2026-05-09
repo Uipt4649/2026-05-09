@@ -258,6 +258,7 @@ const app = {
       'dashboard-title': 'dashboardTitle',
       'dashboard-subtitle': 'dashboardSubtitle',
       'dashboard-find-more-btn': 'dashboardFindMoreBtn',
+      'global-menu-title': 'navMenu',
       'footer-privacy': 'footerPrivacy',
       'footer-terms': 'footerTerms',
       'footer-contact': 'footerContact',
@@ -329,6 +330,8 @@ const app = {
     } else if (viewId === 'dashboard') {
       this.renderFavorites();
       this.renderHistory();
+    } else if (viewId === 'menu') {
+      this.fetchMenu('global-menu-container');
     }
 
     window.scrollTo(0, 0);
@@ -548,8 +551,9 @@ const app = {
     }
   },
 
-  async fetchMenu() {
-    const container = document.getElementById('menu-container');
+  async fetchMenu(containerId = 'menu-container') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
     container.innerHTML = `
       <div class="loading-spinner">
         <span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span>
