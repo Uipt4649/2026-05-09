@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saizeriya - Digital Trattoria</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+Display:wght@600;700&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo" onclick="app.navigate('home')">
+      <span class="material-symbols-outlined">restaurant</span>
+      Saizeriya
+    </div>
+    <nav class="nav-links">
+      <span class="nav-link" data-target="search" onclick="app.navigate('search')">Find Stores</span>
+      <span class="nav-link">Menu</span>
+      <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')">Favorites</span>
+      <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')">History</span>
+    </nav>
+    <button class="btn-sign-in">Sign In</button>
+  </header>
+
+  <!-- Main Content Areas -->
+  <main>
+    <!-- View: Home -->
+    <section id="view-home" class="view-section active">
+      <div class="hero">
+        <div class="hero-content">
+          <h1>Welcome to your<br><span>Digital Trattoria.</span></h1>
+          <p>Find your nearest Saizeriya and enjoy casual, reliable Italian dining for the whole family.</p>
+          
+          <div class="search-box">
+            <div class="search-input-wrapper">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="home-search-input" placeholder="Search by area or station..." onkeypress="app.handleHomeSearch(event)">
+            </div>
+            <button class="btn-primary" onclick="app.navigate('search')">Find Stores</button>
+            <button class="btn-outline" onclick="app.navigate('search')">
+              <span class="material-symbols-outlined">my_location</span> Near Me
+            </button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80" alt="Pasta Dish">
+        </div>
+      </div>
+
+      <div class="quick-discoveries">
+        <h2>Quick Discoveries</h2>
+        <div class="discovery-grid">
+          <div class="discovery-card" onclick="app.navigate('search')">
+            <div class="icon-wrapper">
+              <span class="material-symbols-outlined">map</span>
+            </div>
+            <h3>Explore Area Map</h3>
+            <p>Browse our locations interactively to find the perfect spot for your next meal.</p>
+            <span class="link">View Map <span class="material-symbols-outlined">arrow_forward</span></span>
+          </div>
+          
+          <div class="discovery-card featured">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" alt="Lunch Specials">
+            <div class="content">
+              <h3>Lunch Menu Specials</h3>
+              <p>Great value sets available weekdays until 3 PM.</p>
+            </div>
+          </div>
+          
+          <div class="discovery-card">
+            <div class="icon-wrapper" style="color: #dc3545; background: #f8d7da;">
+              <span class="material-symbols-outlined">shopping_bag</span>
+            </div>
+            <h3>Order Takeout</h3>
+            <p>Enjoy Saizeriya at home. Find stores offering convenient pickup services.</p>
+            <span class="link" style="color: #dc3545;">Find Takeout Stores <span class="material-symbols-outlined">arrow_forward</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View: Search / List -->
+    <section id="view-search" class="view-section">
+      <div class="search-view-container">
+        <div class="search-sidebar">
+          <div class="search-header">
+            <h2>Find a Trattoria</h2>
+            <div class="search-box">
+              <div class="search-input-wrapper">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="list-search-input" placeholder="Search by city, neighborhood, or station" oninput="app.filterStores()">
+              </div>
+            </div>
+            <div class="filters">
+              <button class="filter-btn active" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">local_parking</span> Parking</button>
+              <button class="filter-btn" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">wifi</span> Wi-Fi</button>
+              <button class="filter-btn" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">credit_card</span> E-Payments</button>
+              <button class="filter-btn"><span class="material-symbols-outlined">tune</span> More</button>
+            </div>
+          </div>
+          <div class="store-list" id="store-list-container">
+            <!-- Store Cards injected here -->
+          </div>
+        </div>
+        <div class="map-container">
+          <div id="map"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View: Detail -->
+    <section id="view-detail" class="view-section">
+      <div class="detail-container">
+        <div class="breadcrumb">
+          <span onclick="app.navigate('home')" style="cursor:pointer">Home</span> > <span onclick="app.navigate('search')" style="cursor:pointer">Find Stores</span> > <span id="detail-bc-name"></span>
+        </div>
+        
+        <div class="detail-header">
+          <h1 id="detail-name">Store Name</h1>
+          <div class="detail-actions">
+            <span class="status-badge status-Open" id="detail-status-badge">Open Now</span>
+            <button class="btn-icon" id="btn-favorite" onclick="app.toggleFavorite()">
+              <span class="material-symbols-outlined">favorite_border</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="hero-banner">
+          <img id="detail-hero-image" src="" alt="Store Interior">
+          <div class="banner-tag">Spacious Seating</div>
+        </div>
+        
+        <div class="detail-grid">
+          <div class="detail-left">
+            <div class="detail-card">
+              <h2><span class="material-symbols-outlined">schedule</span> Business Hours</h2>
+              <div class="hours-row">
+                <span style="font-weight: 600;">Today</span>
+                <span id="detail-hours" style="font-weight: 600; color: var(--saizeriya-green);">10:00 - 23:00</span>
+              </div>
+              <div class="hours-row">
+                <span>Last Order</span>
+                <span id="detail-last-order">22:30</span>
+              </div>
+              
+              <div class="crowd-level">
+                <div class="crowd-header">
+                  <span>CROWD LEVEL</span>
+                  <span class="status" id="detail-crowd-status">Busy</span>
+                </div>
+                <div class="crowd-bar" id="detail-crowd-bar">
+                  <div class="crowd-segment filled"></div>
+                  <div class="crowd-segment filled"></div>
+                  <div class="crowd-segment filled"></div>
+                  <div class="crowd-segment"></div>
+                  <div class="crowd-segment"></div>
+                </div>
+                <div class="crowd-desc" id="detail-crowd-desc">Expect a 10-15 minute wait for tables.</div>
+              </div>
+            </div>
+            
+            <div class="detail-card">
+              <h2><span class="material-symbols-outlined">storefront</span> Facilities</h2>
+              <div class="facilities-grid" id="detail-facilities">
+                <!-- Facilities injected here -->
+              </div>
+            </div>
+          </div>
+          
+          <div class="detail-right">
+            <div class="detail-card">
+              <h2>Location Details</h2>
+              <div class="location-details">
+                <div class="location-row">
+                  <span class="material-symbols-outlined">location_on</span>
+                  <div class="location-text">
+                    <p id="detail-address"></p>
+                    <a href="#" onclick="app.navigate('search')"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">map</span> View on large map</a>
+                  </div>
+                </div>
+                <div class="location-row">
+                  <span class="material-symbols-outlined">call</span>
+                  <div class="location-text">
+                    <p id="detail-phone"></p>
+                  </div>
+                </div>
+              </div>
+              <button class="btn-primary btn-block" style="margin-top: 1.5rem;">
+                <span class="material-symbols-outlined">directions</span> Route Search
+              </button>
+              <p style="text-align: center; font-size: 0.85rem; color: var(--text-secondary); margin-top: 1rem;" id="detail-distance"></p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bonus: Menu Section -->
+        <div class="menu-section" id="menu-section">
+          <h2>Menu Highlight</h2>
+          <div id="menu-container">
+            <div class="loading-spinner">
+               <span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span>
+               <p>Fetching latest menu from server...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View: Dashboard -->
+    <section id="view-dashboard" class="view-section">
+      <div class="dashboard-container">
+        <h1>Your Dashboard</h1>
+        <p class="dashboard-subtitle">Quick access to your saved locations and recent views.</p>
+        
+        <div class="dashboard-section">
+          <div class="dashboard-section-header">
+            <h2><span class="material-symbols-outlined">favorite</span> Favorite Stores</h2>
+            <span style="color: var(--saizeriya-green); font-size: 0.9rem; font-weight: 500; cursor: pointer;">Manage <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">chevron_right</span></span>
+          </div>
+          <div class="dashboard-grid" id="favorites-grid">
+            <!-- Favorite cards injected here -->
+          </div>
+        </div>
+        
+        <div class="dashboard-section">
+          <div class="dashboard-section-header">
+            <h2><span class="material-symbols-outlined">history</span> Recently Viewed</h2>
+          </div>
+          <div class="recent-grid" id="recent-grid">
+            <!-- Recent cards injected here -->
+          </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+          <button class="btn-primary" onclick="app.navigate('search')">
+            <span class="material-symbols-outlined">search</span> Find More Stores
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div>
+      <div class="footer-logo">
+        <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle;">restaurant</span>
+        Saizeriya
+      </div>
+      <div class="footer-copy">© 2026 Saizeriya Co., Ltd. All rights reserved.</div>
+    </div>
+    <div class="footer-links">
+      <span>Privacy Policy</span>
+      <span>Terms of Service</span>
+      <span>Contact Us</span>
+      <span>Corporate Info</span>
+    </div>
+  </footer>
+
+  <style>
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- App Logic -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
