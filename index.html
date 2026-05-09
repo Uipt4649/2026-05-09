@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>サイゼリヤ </title>
+  <title>サイゼリヤ</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,11 +30,11 @@
   <header class="app-header">
     <div class="logo" onclick="app.navigate('home')">
       <span class="material-symbols-outlined">restaurant</span>
-      Saizeriya
+      サイゼリヤ
     </div>
     <nav class="nav-links">
       <span class="nav-link" data-target="search" onclick="app.navigate('search')" id="nav-find-stores">店舗検索</span>
-      <span class="nav-link" id="nav-menu">メニュー</span>
+      <span class="nav-link" data-target="menu" onclick="app.navigate('menu')" id="nav-menu">メニュー</span>
       <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')" id="nav-favorites">お気に入り</span>
       <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')" id="nav-history">履歴</span>
     </nav>
@@ -243,6 +243,14 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- View: Menu -->
+    <section id="view-menu" class="view-section">
+      <div class="dashboard-container">
+        <h1 id="global-menu-title" style="margin-bottom: 2rem;">メニュー</h1>
+        <div id="global-menu-container"></div>
       </div>
     </section>
 

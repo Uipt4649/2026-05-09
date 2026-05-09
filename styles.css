@@ -160,7 +160,7 @@ button {
 
 .status-Open { background-color: var(--status-open-bg); color: var(--status-open); }
 .status-Closed { background-color: var(--status-closed-bg); color: var(--status-closed); }
-.status-Soon { background-color: var(--status-soon-bg); color: var(--status-soon); }
+.status-ClosesSoon, .status-Soon { background-color: var(--status-soon-bg); color: var(--status-soon); }
 
 /* Main Content Container */
 main {

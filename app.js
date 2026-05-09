@@ -258,6 +258,7 @@ const app = {
       'dashboard-title': 'dashboardTitle',
       'dashboard-subtitle': 'dashboardSubtitle',
       'dashboard-find-more-btn': 'dashboardFindMoreBtn',
+      'global-menu-title': 'navMenu',
       'footer-privacy': 'footerPrivacy',
       'footer-terms': 'footerTerms',
       'footer-contact': 'footerContact',
@@ -329,6 +330,8 @@ const app = {
     } else if (viewId === 'dashboard') {
       this.renderFavorites();
       this.renderHistory();
+    } else if (viewId === 'menu') {
+      this.fetchMenu('global-menu-container');
     }
 
     window.scrollTo(0, 0);
@@ -454,9 +457,15 @@ const app = {
 
   filterStores() {
     const query = document.getElementById('list-search-input').value.toLowerCase();
+    const activeFilters = Array.from(document.querySelectorAll('.filter-btn.active'))
+      .map(btn => btn.dataset.facility)
+      .filter(f => f);
+
     const filtered = STORES.filter(store => {
       const localizedName = this.localizedStore(store).name.toLowerCase();
-      return localizedName.includes(query) || store.name.toLowerCase().includes(query) || store.address.toLowerCase().includes(query);
+      const matchesText = localizedName.includes(query) || store.name.toLowerCase().includes(query) || store.address.toLowerCase().includes(query);
+      const matchesFacilities = activeFilters.every(f => store.facilities.includes(f));
+      return matchesText && matchesFacilities;
     });
     this.renderStoreList(filtered);
   },
@@ -548,8 +557,9 @@ const app = {
     }
   },
 
-  async fetchMenu() {
-    const container = document.getElementById('menu-container');
+  async fetchMenu(containerId = 'menu-container') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
     container.innerHTML = `
       <div class="loading-spinner">
         <span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span>
@@ -558,11 +568,8 @@ const app = {
     `;
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1200));
-
-      const response = await fetch('mock-menu-api.json');
-      if (!response.ok) throw new Error('Failed to fetch menu');
-      const menuData = await response.json();
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate loading delay
+      const menuData = MENU_DATA;
 
       container.innerHTML = '';
 
