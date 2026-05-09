@@ -99,3 +99,75 @@ const FACILITY_ICONS = {
   "parking": { icon: "local_parking", label: "Parking" },
   "e-payments": { icon: "credit_card", label: "E-Payments" }
 };
+
+const MENU_DATA = [
+  {
+    "category": "Salads",
+    "items": [
+      {
+        "id": "m1",
+        "name": "Milano Salami Salad",
+        "description": "Crisp lettuce topped with authentic Milano salami and pecorino cheese.",
+        "price": "¥350",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        "id": "m2",
+        "name": "Shrimp Salad",
+        "description": "Fresh salad topped with boiled shrimp and our signature dressing.",
+        "price": "¥350",
+        "image": "https://images.unsplash.com/photo-1551248429-40975aa4de74?auto=format&fit=crop&w=300&q=80"
+      }
+    ]
+  },
+  {
+    "category": "Appetizers",
+    "items": [
+      {
+        "id": "m3",
+        "name": "Grilled Escargot",
+        "description": "Oven-baked escargot in garlic butter, a classic Italian favorite.",
+        "price": "¥400",
+        "image": "https://images.unsplash.com/photo-1599335345716-4654da8092ec?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        "id": "m4",
+        "name": "Spicy Grilled Chicken",
+        "description": "Juicy chicken wings grilled to perfection with a spicy kick.",
+        "price": "¥300",
+        "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=300&q=80"
+      }
+    ]
+  },
+  {
+    "category": "Pizza & Pasta",
+    "items": [
+      {
+        "id": "m5",
+        "name": "Margherita Pizza",
+        "description": "Simple and delicious pizza with tomato sauce, mozzarella, and basil.",
+        "price": "¥400",
+        "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80"
+      },
+      {
+        "id": "m6",
+        "name": "Meat Sauce Pasta",
+        "description": "Spaghetti served with a rich and hearty meat sauce.",
+        "price": "¥400",
+        "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=300&q=80"
+      }
+    ]
+  },
+  {
+    "category": "Doria & Gratin",
+    "items": [
+      {
+        "id": "m7",
+        "name": "Milano Style Doria",
+        "description": "Our signature dish: rice topped with meat sauce and white sauce, baked until golden.",
+        "price": "¥300",
+        "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=300&q=80"
+      }
+    ]
+  }
+];
