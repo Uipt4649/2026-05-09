@@ -322,7 +322,9 @@ const app = {
       if (!this.map) this.initMap();
       this.renderStoreList(STORES);
       setTimeout(() => {
-        this.map.invalidateSize();
+        if (this.map && typeof google !== 'undefined') {
+          google.maps.event.trigger(this.map, 'resize');
+        }
       }, 100);
     } else if (viewId === 'dashboard') {
       this.renderFavorites();
@@ -342,19 +344,20 @@ const app = {
   },
 
   initMap() {
-    this.map = L.map('map').setView([35.6895, 139.6917], 12);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap'
-    }).addTo(this.map);
+    this.map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: 35.6895, lng: 139.6917 },
+      zoom: 12,
+      mapTypeControl: false,
+      streetViewControl: false
+    });
+    this.infoWindow = new google.maps.InfoWindow();
   },
 
   renderStoreList(storesToRender) {
     const container = document.getElementById('store-list-container');
     container.innerHTML = '';
 
-    this.markers.forEach(m => this.map.removeLayer(m));
+    this.markers.forEach(m => m.setMap(null));
     this.markers = [];
 
     if (storesToRender.length === 0) {
@@ -362,7 +365,7 @@ const app = {
       return;
     }
 
-    const bounds = L.latLngBounds();
+    const bounds = new google.maps.LatLngBounds();
 
     storesToRender.forEach(store => {
       const localized = this.localizedStore(store);
@@ -392,40 +395,61 @@ const app = {
       card.addEventListener('mouseenter', () => {
         card.classList.add('highlighted');
         const marker = this.markers.find(m => m.storeId === store.id);
-        if (marker) marker.openPopup();
+        if (marker && this.infoWindow) {
+          this.infoWindow.setContent(`
+            <div style="text-align:center;">
+              <h3 style="margin-bottom: 4px; color: #333;">${localized.name}</h3>
+              <p style="margin-bottom: 8px; color: #666;">${this.statusLabel(store.status)}</p>
+              <button style="background:var(--saizeriya-green); color:white; border:none; padding:4px 12px; border-radius:12px; cursor:pointer;" onclick="app.viewStoreDetail('${store.id}')">${this.t('mapViewDetails')}</button>
+            </div>
+          `);
+          this.infoWindow.open(this.map, marker);
+        }
       });
       card.addEventListener('mouseleave', () => {
         card.classList.remove('highlighted');
-        const marker = this.markers.find(m => m.storeId === store.id);
-        if (marker) marker.closePopup();
+        if (this.infoWindow) {
+          this.infoWindow.close();
+        }
       });
 
       container.appendChild(card);
 
-      const customIcon = L.divIcon({
-        className: 'custom-div-icon',
-        html: '<div style="background-color: var(--saizeriya-green); width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-        popupAnchor: [0, -12]
-      });
+      const customIcon = {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: '#007a33',
+        fillOpacity: 1,
+        strokeColor: 'white',
+        strokeWeight: 3,
+        scale: 10
+      };
 
-      const marker = L.marker([store.lat, store.lng], { icon: customIcon }).addTo(this.map);
+      const marker = new google.maps.Marker({
+        position: { lat: store.lat, lng: store.lng },
+        map: this.map,
+        icon: customIcon,
+        title: localized.name
+      });
       marker.storeId = store.id;
 
-      marker.bindPopup(`
-        <div style="text-align:center;">
-          <h3 style="margin-bottom: 4px;">${localized.name}</h3>
-          <p style="margin-bottom: 8px;">${this.statusLabel(store.status)}</p>
-          <button style="background:var(--saizeriya-green); color:white; border:none; padding:4px 12px; border-radius:12px; cursor:pointer;" onclick="app.viewStoreDetail('${store.id}')">${this.t('mapViewDetails')}</button>
-        </div>
-      `);
+      marker.addListener('click', () => {
+        if (this.infoWindow) {
+          this.infoWindow.setContent(`
+            <div style="text-align:center;">
+              <h3 style="margin-bottom: 4px; color: #333;">${localized.name}</h3>
+              <p style="margin-bottom: 8px; color: #666;">${this.statusLabel(store.status)}</p>
+              <button style="background:var(--saizeriya-green); color:white; border:none; padding:4px 12px; border-radius:12px; cursor:pointer;" onclick="app.viewStoreDetail('${store.id}')">${this.t('mapViewDetails')}</button>
+            </div>
+          `);
+          this.infoWindow.open(this.map, marker);
+        }
+      });
 
       this.markers.push(marker);
-      bounds.extend([store.lat, store.lng]);
+      bounds.extend({ lat: store.lat, lng: store.lng });
     });
 
-    if (this.markers.length > 0) this.map.fitBounds(bounds, { padding: [50, 50] });
+    if (this.markers.length > 0) this.map.fitBounds(bounds, 50);
   },
 
   filterStores() {
