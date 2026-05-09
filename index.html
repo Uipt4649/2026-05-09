@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Saizeriya - Digital Trattoria</title>
+  <title>サイゼリヤ - デジタルトラットリア</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,12 +28,18 @@
       Saizeriya
     </div>
     <nav class="nav-links">
-      <span class="nav-link" data-target="search" onclick="app.navigate('search')">Find Stores</span>
-      <span class="nav-link">Menu</span>
-      <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')">Favorites</span>
-      <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')">History</span>
+      <span class="nav-link" data-target="search" onclick="app.navigate('search')" id="nav-find-stores">店舗検索</span>
+      <span class="nav-link" id="nav-menu">メニュー</span>
+      <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')" id="nav-favorites">お気に入り</span>
+      <span class="nav-link" data-target="dashboard" onclick="app.navigate('dashboard')" id="nav-history">履歴</span>
     </nav>
-    <button class="btn-sign-in">Sign In</button>
+    <div style="display:flex; align-items:center; gap: 0.75rem;">
+      <select id="language-select" onchange="app.changeLanguage(this.value)" aria-label="言語切替" style="border: 1px solid var(--border-color); border-radius: 999px; padding: 0.45rem 0.8rem; background: white;">
+        <option value="ja">日本語</option>
+        <option value="en">English</option>
+      </select>
+      <button class="btn-sign-in" id="btn-sign-in">サインイン</button>
+    </div>
   </header>
 
   <!-- Main Content Areas -->
@@ -42,17 +48,17 @@
     <section id="view-home" class="view-section active">
       <div class="hero">
         <div class="hero-content">
-          <h1>Welcome to your<br><span>Digital Trattoria.</span></h1>
-          <p>Find your nearest Saizeriya and enjoy casual, reliable Italian dining for the whole family.</p>
+          <h1 id="home-title">ようこそ、<br><span>デジタルトラットリアへ。</span></h1>
+          <p id="home-subtitle">近くのサイゼリヤを探して、家族で気軽にイタリアンを楽しみましょう。</p>
           
           <div class="search-box">
             <div class="search-input-wrapper">
               <span class="material-symbols-outlined">search</span>
-              <input type="text" id="home-search-input" placeholder="Search by area or station..." onkeypress="app.handleHomeSearch(event)">
+              <input type="text" id="home-search-input" placeholder="エリア・駅名で検索..." onkeypress="app.handleHomeSearch(event)">
             </div>
-            <button class="btn-primary" onclick="app.navigate('search')">Find Stores</button>
+            <button class="btn-primary" onclick="app.navigate('search')" id="home-find-btn">店舗を探す</button>
             <button class="btn-outline" onclick="app.navigate('search')">
-              <span class="material-symbols-outlined">my_location</span> Near Me
+              <span class="material-symbols-outlined">my_location</span> <span id="home-nearby-btn">近くのお店</span>
             </button>
           </div>
         </div>
@@ -62,22 +68,22 @@
       </div>
 
       <div class="quick-discoveries">
-        <h2>Quick Discoveries</h2>
+        <h2 id="quick-discoveries-title">おすすめ機能</h2>
         <div class="discovery-grid">
           <div class="discovery-card" onclick="app.navigate('search')">
             <div class="icon-wrapper">
               <span class="material-symbols-outlined">map</span>
             </div>
-            <h3>Explore Area Map</h3>
-            <p>Browse our locations interactively to find the perfect spot for your next meal.</p>
-            <span class="link">View Map <span class="material-symbols-outlined">arrow_forward</span></span>
+            <h3 id="quick-map-title">地図で探す</h3>
+            <p id="quick-map-desc">地図から店舗を直感的に探して、次のお食事にぴったりのお店を見つけましょう。</p>
+            <span class="link"><span id="quick-map-link">地図を開く</span> <span class="material-symbols-outlined">arrow_forward</span></span>
           </div>
           
           <div class="discovery-card featured">
             <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" alt="Lunch Specials">
             <div class="content">
-              <h3>Lunch Menu Specials</h3>
-              <p>Great value sets available weekdays until 3 PM.</p>
+              <h3 id="quick-lunch-title">ランチメニュー</h3>
+              <p id="quick-lunch-desc">平日15時までのお得なセットをご用意しています。</p>
             </div>
           </div>
           
@@ -85,9 +91,9 @@
             <div class="icon-wrapper" style="color: #dc3545; background: #f8d7da;">
               <span class="material-symbols-outlined">shopping_bag</span>
             </div>
-            <h3>Order Takeout</h3>
-            <p>Enjoy Saizeriya at home. Find stores offering convenient pickup services.</p>
-            <span class="link" style="color: #dc3545;">Find Takeout Stores <span class="material-symbols-outlined">arrow_forward</span></span>
+            <h3 id="quick-takeout-title">テイクアウト</h3>
+            <p id="quick-takeout-desc">ご自宅でもサイゼリヤを。受け取り対応店舗を探せます。</p>
+            <span class="link" style="color: #dc3545;"><span id="quick-takeout-link">対応店舗を探す</span> <span class="material-symbols-outlined">arrow_forward</span></span>
           </div>
         </div>
       </div>
@@ -98,18 +104,18 @@
       <div class="search-view-container">
         <div class="search-sidebar">
           <div class="search-header">
-            <h2>Find a Trattoria</h2>
+            <h2 id="search-title">店舗を探す</h2>
             <div class="search-box">
               <div class="search-input-wrapper">
                 <span class="material-symbols-outlined">search</span>
-                <input type="text" id="list-search-input" placeholder="Search by city, neighborhood, or station" oninput="app.filterStores()">
+                <input type="text" id="list-search-input" placeholder="市区町村・エリア・駅名で検索" oninput="app.filterStores()">
               </div>
             </div>
             <div class="filters">
-              <button class="filter-btn active" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">local_parking</span> Parking</button>
-              <button class="filter-btn" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">wifi</span> Wi-Fi</button>
-              <button class="filter-btn" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">credit_card</span> E-Payments</button>
-              <button class="filter-btn"><span class="material-symbols-outlined">tune</span> More</button>
+              <button class="filter-btn active" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">local_parking</span> <span id="filter-parking">駐車場</span></button>
+              <button class="filter-btn" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">wifi</span> <span id="filter-wifi">Wi-Fi</span></button>
+              <button class="filter-btn" onclick="this.classList.toggle('active')"><span class="material-symbols-outlined">credit_card</span> <span id="filter-epayment">電子決済</span></button>
+              <button class="filter-btn"><span class="material-symbols-outlined">tune</span> <span id="filter-more">その他</span></button>
             </div>
           </div>
           <div class="store-list" id="store-list-container">
@@ -126,7 +132,7 @@
     <section id="view-detail" class="view-section">
       <div class="detail-container">
         <div class="breadcrumb">
-          <span onclick="app.navigate('home')" style="cursor:pointer">Home</span> > <span onclick="app.navigate('search')" style="cursor:pointer">Find Stores</span> > <span id="detail-bc-name"></span>
+          <span onclick="app.navigate('home')" style="cursor:pointer" id="breadcrumb-home">ホーム</span> > <span onclick="app.navigate('search')" style="cursor:pointer" id="breadcrumb-search">店舗検索</span> > <span id="detail-bc-name"></span>
         </div>
         
         <div class="detail-header">
@@ -141,25 +147,25 @@
         
         <div class="hero-banner">
           <img id="detail-hero-image" src="" alt="Store Interior">
-          <div class="banner-tag">Spacious Seating</div>
+          <div class="banner-tag" id="detail-banner-tag">ゆったり席あり</div>
         </div>
         
         <div class="detail-grid">
           <div class="detail-left">
             <div class="detail-card">
-              <h2><span class="material-symbols-outlined">schedule</span> Business Hours</h2>
+              <h2 id="detail-hours-title"><span class="material-symbols-outlined">schedule</span> 営業時間</h2>
               <div class="hours-row">
-                <span style="font-weight: 600;">Today</span>
+                <span style="font-weight: 600;" id="detail-today-label">本日</span>
                 <span id="detail-hours" style="font-weight: 600; color: var(--saizeriya-green);">10:00 - 23:00</span>
               </div>
               <div class="hours-row">
-                <span>Last Order</span>
+                <span id="detail-last-order-label">ラストオーダー</span>
                 <span id="detail-last-order">22:30</span>
               </div>
               
               <div class="crowd-level">
                 <div class="crowd-header">
-                  <span>CROWD LEVEL</span>
+                  <span id="detail-crowd-level-label">混雑度</span>
                   <span class="status" id="detail-crowd-status">Busy</span>
                 </div>
                 <div class="crowd-bar" id="detail-crowd-bar">
@@ -174,7 +180,7 @@
             </div>
             
             <div class="detail-card">
-              <h2><span class="material-symbols-outlined">storefront</span> Facilities</h2>
+              <h2 id="detail-facilities-title"><span class="material-symbols-outlined">storefront</span> 設備</h2>
               <div class="facilities-grid" id="detail-facilities">
                 <!-- Facilities injected here -->
               </div>
@@ -183,13 +189,13 @@
           
           <div class="detail-right">
             <div class="detail-card">
-              <h2>Location Details</h2>
+              <h2 id="detail-location-title">店舗情報</h2>
               <div class="location-details">
                 <div class="location-row">
                   <span class="material-symbols-outlined">location_on</span>
                   <div class="location-text">
                     <p id="detail-address"></p>
-                    <a href="#" onclick="app.navigate('search')"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">map</span> View on large map</a>
+                    <a href="#" onclick="app.navigate('search')"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">map</span> <span id="detail-large-map-link">大きな地図で見る</span></a>
                   </div>
                 </div>
                 <div class="location-row">
@@ -200,7 +206,7 @@
                 </div>
               </div>
               <button class="btn-primary btn-block" style="margin-top: 1.5rem;">
-                <span class="material-symbols-outlined">directions</span> Route Search
+                <span class="material-symbols-outlined">directions</span> <span id="detail-route-btn">ルート検索</span>
               </button>
               <p style="text-align: center; font-size: 0.85rem; color: var(--text-secondary); margin-top: 1rem;" id="detail-distance"></p>
             </div>
@@ -209,11 +215,11 @@
         
         <!-- Bonus: Menu Section -->
         <div class="menu-section" id="menu-section">
-          <h2>Menu Highlight</h2>
+          <h2 id="menu-highlight-title">おすすめメニュー</h2>
           <div id="menu-container">
             <div class="loading-spinner">
                <span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span>
-               <p>Fetching latest menu from server...</p>
+               <p id="menu-loading-text">メニュー情報を取得中です...</p>
             </div>
           </div>
         </div>
@@ -223,13 +229,13 @@
     <!-- View: Dashboard -->
     <section id="view-dashboard" class="view-section">
       <div class="dashboard-container">
-        <h1>Your Dashboard</h1>
-        <p class="dashboard-subtitle">Quick access to your saved locations and recent views.</p>
+        <h1 id="dashboard-title">ダッシュボード</h1>
+        <p class="dashboard-subtitle" id="dashboard-subtitle">保存した店舗と最近見た店舗にすぐアクセスできます。</p>
         
         <div class="dashboard-section">
           <div class="dashboard-section-header">
-            <h2><span class="material-symbols-outlined">favorite</span> Favorite Stores</h2>
-            <span style="color: var(--saizeriya-green); font-size: 0.9rem; font-weight: 500; cursor: pointer;">Manage <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">chevron_right</span></span>
+            <h2 id="dashboard-favorites-title"><span class="material-symbols-outlined">favorite</span> お気に入り店舗</h2>
+            <span style="color: var(--saizeriya-green); font-size: 0.9rem; font-weight: 500; cursor: pointer;" id="dashboard-manage">管理 <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">chevron_right</span></span>
           </div>
           <div class="dashboard-grid" id="favorites-grid">
             <!-- Favorite cards injected here -->
@@ -238,7 +244,7 @@
         
         <div class="dashboard-section">
           <div class="dashboard-section-header">
-            <h2><span class="material-symbols-outlined">history</span> Recently Viewed</h2>
+            <h2 id="dashboard-history-title"><span class="material-symbols-outlined">history</span> 最近見た店舗</h2>
           </div>
           <div class="recent-grid" id="recent-grid">
             <!-- Recent cards injected here -->
@@ -247,7 +253,7 @@
         
         <div style="text-align: center; margin-top: 3rem;">
           <button class="btn-primary" onclick="app.navigate('search')">
-            <span class="material-symbols-outlined">search</span> Find More Stores
+            <span class="material-symbols-outlined">search</span> <span id="dashboard-find-more-btn">さらに店舗を探す</span>
           </button>
         </div>
       </div>
@@ -261,13 +267,13 @@
         <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle;">restaurant</span>
         Saizeriya
       </div>
-      <div class="footer-copy">© 2026 Saizeriya Co., Ltd. All rights reserved.</div>
+      <div class="footer-copy" id="footer-copy">© 2026 Saizeriya Co., Ltd. All rights reserved.</div>
     </div>
     <div class="footer-links">
-      <span>Privacy Policy</span>
-      <span>Terms of Service</span>
-      <span>Contact Us</span>
-      <span>Corporate Info</span>
+      <span id="footer-privacy">プライバシーポリシー</span>
+      <span id="footer-terms">利用規約</span>
+      <span id="footer-contact">お問い合わせ</span>
+      <span id="footer-corporate">企業情報</span>
     </div>
   </footer>
 
